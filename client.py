@@ -37,13 +37,13 @@ while True:
             # client, you should exit.
 
             ### write your code here ###
-            clientRec = client_socket.recv(2048).decode()
-            if clientRec == "exit" or clientRec == "":
+            clientRec = client_socket.recv(1024)
+            if clientRec.decode() == "" or clientRec.decode() == "exit":
                 client_socket.close()
                 exit()
             else:
-                client_socket.send(clientRec.encode())
-        ### your code ends here ###
+                client_socket.send(clientRec)
+                ### your code ends here ###
 
         else:
             # takes inputs from the user
@@ -51,11 +51,12 @@ while True:
 
             # send a message to the server
             ### write your code here ###
-            if message == "exit":
+            if message.__contains__("exit") or ''.__eq__(message):
                 client_socket.close()
                 exit()
+
             client_socket.send(message.encode())
-        ### your code ends here ###
+            ### your code ends here ###
 
 
 client_socket.close()
