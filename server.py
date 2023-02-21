@@ -11,18 +11,21 @@ import sys
 # this is to keep all the newly joined connections!
 all_client_connections = []
 
+"""
+returns the time of day
+"""
+
 
 def now():
-    """
-    returns the time of day
-    """
     return time.ctime(time.time())
 
 
+"""
+a client handler function
+"""
+
+
 def handleClient(connection, addr):
-    """
-    a client handler function
-    """
     # this is where we broadcast everyone that a new client has joined
 
     # append this this to the list for broadcast
@@ -30,8 +33,9 @@ def handleClient(connection, addr):
     # that a new client has just joined.
 
     ### Write your code here ###
-    #broadcastMessage = addr + bytes("Joined the chat")
-    all_client_connections.append([connection, addr])
+    all_client_connections.append(connection)
+    broadcastMessage = "{addr} - Joined the chat"
+    broadcast(connection, broadcastMessage)
     ### Your code ends here ###
 
     while True:
@@ -51,7 +55,8 @@ def broadcast(connection, message):
     print("Broadcasting")
     ### Write your code here ###
     for i in all_client_connections:
-        connectionSocket = i[0]
+        if i != connection:
+            i.send(message.encode)
         #message = connectionSocket[i[0]]
 
     # connectionSocket.send(message)
@@ -70,7 +75,7 @@ def main():
         # Use the bind function wisely!
         ### Write your code here ###
         serverSocket.bind(('', serverPort))
-    ### Your code ends here ###
+        ### Your code ends here ###
 
     except:
         print("Bind failed. Error : 1")
