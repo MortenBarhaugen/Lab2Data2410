@@ -20,6 +20,20 @@ def now():
     return time.ctime(time.time())
 
 
+def broadcast(connection, message):
+    print("Broadcasting")
+    ### Write your code here ###
+    for i in all_client_connections:
+        if i != connection:
+            i.send(message.encode())
+        #message = connectionSocket[i[0]]
+
+    # connectionSocket.send(message)
+
+
+### Your code ends here ###
+
+
 """
 a client handler function
 """
@@ -34,7 +48,7 @@ def handleClient(connection, addr):
 
     ### Write your code here ###
     all_client_connections.append(connection)
-    broadcastMessage = "{addr} - Joined the chat"
+    broadcastMessage = "f{addr} - Joined the chat"
     broadcast(connection, broadcastMessage)
     ### Your code ends here ###
 
@@ -51,18 +65,6 @@ def handleClient(connection, addr):
     all_client_connections.remove(connection)
 
 
-def broadcast(connection, message):
-    print("Broadcasting")
-    ### Write your code here ###
-    for i in all_client_connections:
-        if i != connection:
-            i.send(message.encode)
-        #message = connectionSocket[i[0]]
-
-    # connectionSocket.send(message)
-
-
-### Your code ends here ###
 
 def main():
     """
