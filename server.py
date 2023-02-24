@@ -20,20 +20,6 @@ def now():
     return time.ctime(time.time())
 
 
-def broadcast(connection, message):
-    print("Broadcasting")
-    ### Write your code here ###
-    for i in all_client_connections:
-        if i != connection:
-            i.send(message.encode())
-        #message = connectionSocket[i[0]]
-
-    # connectionSocket.send(message)
-
-
-### Your code ends here ###
-
-
 """
 a client handler function
 """
@@ -41,15 +27,22 @@ a client handler function
 
 def handleClient(connection, addr):
     # this is where we broadcast everyone that a new client has joined
+    """
+    Adds the users to the list and handles them accordingly, it modifies the message and sends it to the
+    broadcast function, if the user is new it also boradcasts the message to inform everyone that a new
+    user has joined the area
+    """
 
     # append this this to the list for broadcast
     # create a message to inform all other clients
     # that a new client has just joined.
 
     ### Write your code here ###
-    all_client_connections.append(connection)
-    broadcastMessage = "f{addr} - Joined the chat"
-    broadcast(connection, broadcastMessage)
+    if connection not in all_client_connections:        #checks if the connection is unique
+        broadcastMessage = str(addr) + " - Joined the chat" #prepares a message for the other clients with the user id
+        all_client_connections.append(connection)       #appends the connection of the new client to the list of active clients
+
+        broadcast(connection, broadcastMessage)         #broadcasts the joining message for the new client to the other clients
     ### Your code ends here ###
 
     while True:
@@ -59,12 +52,27 @@ def handleClient(connection, addr):
             break
         ### Write your code here ###
         # broadcast this message to the others
-        broadcast(connection, message)
+        modifiedMessage = str(addr) + str(message) #adds an id to the message so we can differanciate the senders
+        broadcast(connection, modifiedMessage)  #broadcasts the message to the other clients
     ### Your code ends here ###
     connection.close()
     all_client_connections.remove(connection)
 
 
+def broadcast(connection, message):
+    """
+    The function takes in a string connection that contains the information of the connection of the users,
+    it also takes in a modified message that it sends to all the users. it compares all the users logged in with the user
+    that sent the message and skips the sender and sends to everyone else.
+    """
+    print("Broadcasting")
+    ### Write your code here ###
+    for i in all_client_connections:    #checks all the connections
+        if i != connection:             #makes sure we don't send the message to the newly joined user
+            i.send(message.encode())    #sends the message to the sockets of one user that is not the newly joined
+
+
+### Your code ends here ###
 
 def main():
     """
@@ -76,7 +84,7 @@ def main():
     try:
         # Use the bind function wisely!
         ### Write your code here ###
-        serverSocket.bind(('', serverPort))
+        serverSocket.bind(('', serverPort))     #binds to localhost (internal in the pc) on port 12000
         ### Your code ends here ###
 
     except:
