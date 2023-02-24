@@ -37,13 +37,13 @@ while True:
             # client, you should exit.
 
             ### write your code here ###
-            clientRec = client_socket.recv(1024)
-            if clientRec.decode() == "" or clientRec.decode() == "exit":
-                client_socket.close()
-                exit()
-            else:
-                client_socket.send(clientRec)
-                ### your code ends here ###
+            clientRec = client_socket.recv(2048) #receive the string from server
+            if clientRec not in read_sockets:   #check of string already is in the read sockets
+                if clientRec.decode() == "" or clientRec.decode() == "exit":    #check if the recieving string is either exit or empty
+                    client_socket.close()   #closes the client
+                    exit()                  #closes the client
+                print(clientRec.decode())            #prints the received content
+            ### your code ends here ###
 
         else:
             # takes inputs from the user
@@ -51,11 +51,14 @@ while True:
 
             # send a message to the server
             ### write your code here ###
-            if message.__contains__("exit") or ''.__eq__(message):
-                client_socket.close()
-                exit()
+            if message.__contains__("exit") or ''.__eq__(message): #checks if the content put in is either exit or empty to exit
+                client_socket.close()       #closes the client
+                exit()                      #closes the client
 
-            client_socket.send(message.encode())
+            write_socket.append(message)    #appends the content to the write_socket list to write
+            for m in write_socket:          #goes trough every element in write_socket
+                client_socket.send(m.encode())      #sends the content of the element m to the server
+                write_socket.remove(m)         #removes the earlier message so it doesn't block similar messages to be sent
             ### your code ends here ###
 
 
